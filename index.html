@@ -7,13 +7,49 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Aquí va TODO tu contenido actual del HTML desde <body>... incluyendo el script.js -->
-  <!-- Borra todo lo que está en <style> y <script> y muévelo a archivos externos -->
-  <!-- Deja solo las etiquetas <link> y <script src=""> para conectar los archivos -->
+  <h1>Malla Curricular - Ingeniería Informática</h1>
 
-  <!-- CONTENIDO DE TU HTML... -->
-  
+  <div class="leyenda">
+    <div class="leyenda-item">
+      <div class="leyenda-color" style="background-color: var(--color-aprobado);"></div>
+      <span>Aprobado</span>
+    </div>
+    <div class="leyenda-item">
+      <div class="leyenda-color" style="background-color: var(--color-cursando);"></div>
+      <span>Cursando</span>
+    </div>
+    <div class="leyenda-item">
+      <div class="leyenda-color" style="background-color: var(--color-pendiente);"></div>
+      <span>Pendiente</span>
+    </div>
+    <div class="leyenda-item">
+      <div class="leyenda-color" style="background-color: var(--color-bloqueado);"></div>
+      <span>Bloqueado</span>
+    </div>
+  </div>
+
+  <div class="estadisticas">
+    <div class="estadistica-item">
+      <div>Progreso de la carrera</div>
+      <div class="progreso-container">
+        <div class="progreso-bar" id="progreso-bar"></div>
+      </div>
+      <div id="progreso-texto">0% completado</div>
+    </div>
+
+    <div class="estadistica-item">
+      <div id="asignaturas-totales">Total asignaturas: 57</div>
+      <div id="asignaturas-aprobadas">Aprobadas: 0 (0%)</div>
+    </div>
+
+    <div class="estadistica-item">
+      <div id="creditos-totales">Créditos totales: 300</div>
+      <div id="creditos-aprobados">Aprobados: 0 (0%)</div>
+    </div>
+  </div>
+
+  <div id="malla-container"></div>
+
   <script src="script.js"></script>
 </body>
 </html>
-
