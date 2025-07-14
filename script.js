@@ -1,1 +1,48 @@
+:root {
+  --color-aprobado: #C8A2C8;
+  --color-cursando: #FFB6C1;
+  --color-pendiente: #D8BFD8;
+  --color-bloqueado: #E6E6FA;
+  --color-fondo: #FFF0F5;
+  --color-cabecera: #9370DB;
+  --color-texto: #4B0082;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+}
+
+/* ... todo el CSS que tenías ... */
+
+/* Tooltip para botones bloqueados */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
 
