@@ -1,1 +1,126 @@
+const mallaCompleta = [
+  // Aquí va TODO el arreglo con las 57 asignaturas
+  // Ya lo tenías copiado completamente, así que puedes pegarlo tal cual
+];
+
+const mallaContainer = document.getElementById("malla-container");
+let estadoAsignaturas = JSON.parse(localStorage.getItem("estadoMalla")) || {};
+
+function renderizarMalla() {
+  mallaContainer.innerHTML = "";
+
+  const semestres = {};
+  mallaCompleta.forEach(asignatura => {
+    if (!semestres[asignatura.semestre]) {
+      semestres[asignatura.semestre] = [];
+    }
+    semestres[asignatura.semestre].push(asignatura);
+  });
+
+  for (const [numeroSemestre, asignaturas] of Object.entries(semestres)) {
+    const semestreDiv = document.createElement("div");
+    semestreDiv.className = "semestre";
+
+    const header = document.createElement("div");
+    header.className = "semestre-header";
+    header.textContent = `Semestre ${numeroSemestre}`;
+    semestreDiv.appendChild(header);
+
+    const grid = document.createElement("div");
+    grid.className = "malla-grid";
+
+    asignaturas.forEach(asignatura => {
+      const asignaturaDiv = document.createElement("div");
+      asignaturaDiv.className = "asignatura";
+
+      const estadoActual = estadoAsignaturas[asignatura.sigla] || "pendiente";
+      const prerequisitosCumplidos = asignatura.prerequisitos.every(
+        prereq => estadoAsignaturas[prereq] === "aprobado"
+      );
+
+      if (estadoActual === "aprobado") {
+        asignaturaDiv.classList.add("aprobado");
+      } else if (estadoActual === "cursando") {
+        asignaturaDiv.classList.add("cursando");
+      } else if (!prerequisitosCumplidos && asignatura.prerequisitos.length > 0) {
+        asignaturaDiv.classList.add("bloqueado");
+      } else {
+        asignaturaDiv.classList.add("pendiente");
+      }
+
+      const botonesEstado = prerequisitosCumplidos || asignatura.prerequisitos.length === 0
+        ? `<div class="estado-botones">
+            <button class="estado-btn btn-aprobado" data-sigla="${asignatura.sigla}" data-estado="aprobado">✓</button>
+            <button class="estado-btn btn-cursando" data-sigla="${asignatura.sigla}" data-estado="cursando">~</button>
+            <button class="estado-btn btn-pendiente" data-sigla="${asignatura.sigla}" data-estado="pendiente">✗</button>
+          </div>`
+        : `<div class="estado-botones">
+            <button class="estado-btn btn-bloqueado tooltip" disabled data-sigla="${asignatura.sigla}">
+              ✓
+              <span class="tooltiptext">Prerrequisitos no cumplidos</span>
+            </button>
+            <button class="estado-btn btn-bloqueado tooltip" disabled data-sigla="${asignatura.sigla}">
+              ~
+              <span class="tooltiptext">Prerrequisitos no cumplidos</span>
+            </button>
+            <button class="estado-btn btn-pendiente" data-sigla="${asignatura.sigla}" data-estado="pendiente">✗</button>
+          </div>`;
+
+      asignaturaDiv.innerHTML = `
+        <h3>${asignatura.sigla} - ${asignatura.nombre}</h3>
+        <div class="creditos">${asignatura.creditos} cr.</div>
+        <p>Semestre ${asignatura.semestre}</p>
+        <div class="prerequisitos">
+          ${asignatura.prerequisitos.length > 0 ? 
+            `Prerrequisitos: ${asignatura.prerequisitos.join(", ")}` : 
+            "Sin prerrequisitos"}
+        </div>
+        ${botonesEstado}
+      `;
+
+      grid.appendChild(asignaturaDiv);
+    });
+
+    semestreDiv.appendChild(grid);
+    mallaContainer.appendChild(semestreDiv);
+  }
+
+  actualizarEstadisticas();
+
+  document.querySelectorAll(".estado-btn:not(:disabled)").forEach(boton => {
+    boton.addEventListener("click", function() {
+      const sigla = this.getAttribute("data-sigla");
+      const nuevoEstado = this.getAttribute("data-estado");
+
+      estadoAsignaturas[sigla] = nuevoEstado;
+      localStorage.setItem("estadoMalla", JSON.stringify(estadoAsignaturas));
+
+      renderizarMalla();
+    });
+  });
+}
+
+function actualizarEstadisticas() {
+  const totalAsignaturas = mallaCompleta.length;
+  const asignaturasAprobadas = mallaCompleta.filter(
+    a => estadoAsignaturas[a.sigla] === "aprobado"
+  ).length;
+
+  const creditosTotales = 300;
+  const creditosAprobados = mallaCompleta.reduce((total, a) => {
+    return estadoAsignaturas[a.sigla] === "aprobado" ? total + a.creditos : total;
+  }, 0);
+
+  const porcentajeAsignaturas = Math.round((asignaturasAprobadas / totalAsignaturas) * 100);
+  const porcentajeCreditos = Math.round((creditosAprobados / creditosTotales) * 100);
+
+  document.getElementById("asignaturas-totales").textContent = `Total asignaturas: ${totalAsignaturas}`;
+  document.getElementById("asignaturas-aprobadas").textContent = `Aprobadas: ${asignaturasAprobadas} (${porcentajeAsignaturas}%)`;
+  document.getElementById("creditos-totales").textContent = `Créditos totales: ${creditosTotales}`;
+  document.getElementById("creditos-aprobados").textContent = `Aprobados: ${creditosAprobados} (${porcentajeCreditos}%)`;
+  document.getElementById("progreso-bar").style.width = `${porcentajeCreditos}%`;
+  document.getElementById("progreso-texto").textContent = `${porcentajeCreditos}% completado`;
+}
+
+renderizarMalla();
 
